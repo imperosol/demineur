@@ -51,18 +51,18 @@ class Box:
         elif self.__hasFlag:
             return '@'
         else:
-            return "U"
-
-    def debug_str(self):
-        if not self.__hasBeenDiscovered:
-            if self.__hasMine:
-                return 'X'
-            else:
-                return str(self.surroundingMines)
-        elif self.__hasFlag:
-            return '@'
-        else:
             return 'U'
+    #
+    # def debug_str(self):
+    #     if not self.__hasBeenDiscovered:
+    #         if self.__hasMine:
+    #             return 'X'
+    #         else:
+    #             return str(self.surroundingMines)
+    #     elif self.__hasFlag:
+    #         return '@'
+    #     else:
+    #         return 'U'
 
 
 class App(tk.Frame):
@@ -70,7 +70,7 @@ class App(tk.Frame):
         super().__init__(master)
         self.game_grid = Grid()
         self.master = master
-        self.master.title("Mon app")
+        self.master.title('Minesweeper')
         self.master.geometry("800x600")
         self.button_list = [[] for x in range(LINE)]
         self.is_game_ended = False
@@ -186,34 +186,6 @@ class Grid:
                             if self.grid[i + _line][j + _column].is_mined():
                                 self.grid[i][j].surroundingMines += 1
 
-    def discover_box(self, line, column):
-        _box = self.grid[line][column]
-        _box.discover()
-        if _box.is_mined():
-            print("perdu")
-            # TODO : Ajouter les fonctionnalités pour mettre fin à la partie quand on découvre une bombe
-        elif _box.surroundingMines == 0:
-            for i in range(-1, 2):
-                for j in range(-1, 2):
-                    if 0 <= line + i < LINE and 0 <= column + j < COLUMN:
-                        if not self.grid[line + i][column + j].has_been_discovered() \
-                                and not self.grid[line + i][column + j].has_flag():
-                            self.discover_box(line + i, column + j)
-
-    def dig(self, line, column):
-        if line < 0 or line >= LINE or column < 0 or column >= COLUMN:
-            print("Hors de la grille")
-            return False
-        elif self.grid[line][column].has_flag():
-            print("Vous ne pouvez pas creuser ici")
-            return False
-        elif self.grid[line][column].has_been_discovered():
-            print("Déjà creusé")
-            return False
-        else:
-            self.discover_box(line, column)
-            return True
-
     def get_box_state(self, line, column):
         return self.grid[line][column].__str__()
 
@@ -225,36 +197,12 @@ class Grid:
             displayable_grid += '\n'
         return displayable_grid
 
-    def debug_str(self):
-        displayable_grid = ""
-        for i in self.grid:
-            for j in i:
-                displayable_grid += j.debug_str() + ' '
-            displayable_grid += '\n'
-        return displayable_grid
-
 
 def game():
     root = tk.Tk()
     window = App(root)
     window.mainloop()
-    # game_grid = Grid()
-    # is_game_finished, is_valid_choice = False, False
-    # place_to_dig = [0, 0]
-    # while not is_game_finished:
-    #     print(game_grid)
-    #     while not is_valid_choice:
-    #         place_to_dig[0] = int(input("Sur quelle ligne voulez-vous creuser ?   ")) - 1
-    #         place_to_dig[1] = int(input("Sur quelle colonne voulez-vous creuser ? ")) - 1
-    #         is_valid_choice = game_grid.dig(place_to_dig[0], place_to_dig[1])
 
 
 if __name__ == '__main__':
     game()
-"""
-ma_grille = Grid()
-print(ma_grille)
-print(ma_grille.debug_str())
-ma_grille.discover_box(1, 1)
-print(ma_grille)
-"""
