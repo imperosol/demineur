@@ -2,5 +2,5 @@
 /main.spec
 /dist/
 /build/
-/demineur.zip
+#/demineur.zip
 /setup.py
