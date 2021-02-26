@@ -34,45 +34,16 @@ class Box:
     def has_flag(self):
         return self.__hasFlag
 
-    def __str__(self):
-        """
-        :return: if the box has been discovered :
-                        if the box has a mine : 'X'
-                        if the box has no mine : a string corresponding to the number of surrounding mines
-                else :
-                        if the box has a flag : '@'
-                        else : 'U'
-        """
-        if self.__hasBeenDiscovered:
-            if self.__hasMine:
-                return 'X'
-            else:
-                return str(self.surroundingMines)
-        elif self.__hasFlag:
-            return '@'
-        else:
-            return 'U'
-    #
-    # def debug_str(self):
-    #     if not self.__hasBeenDiscovered:
-    #         if self.__hasMine:
-    #             return 'X'
-    #         else:
-    #             return str(self.surroundingMines)
-    #     elif self.__hasFlag:
-    #         return '@'
-    #     else:
-    #         return 'U'
-
 
 class Grid:
     def __init__(self):
+        _nbr_of_boxes, _nbr_of_bombs = LINE * COLUMN, (LINE * COLUMN) // BOMB_PROPORTION
         self.grid = [[Box() for x in range(COLUMN)] for y in range(LINE)]
-        self.__undiscovered_secured_boxes = LINE * COLUMN - (LINE * COLUMN) // BOMB_PROPORTION
+        self.__undiscovered_secured_boxes = _nbr_of_boxes - _nbr_of_bombs
         self.flags = 0
         # Create a list of coordinates couple to determine the places in which the bombs will be put
         _coordinates_list = [(i, j) for i in range(LINE) for j in range(COLUMN)]
-        _coordinates_list = sample(_coordinates_list, k=(LINE * COLUMN) // BOMB_PROPORTION)
+        _coordinates_list = sample(_coordinates_list, k=_nbr_of_bombs)
         for i in _coordinates_list:
             self.grid[i[0]][i[1]].put_mine()
         # Set the number of mines surrounding each box
@@ -85,15 +56,38 @@ class Grid:
                                 if self.grid[i + _line][j + _column].is_mined():
                                     self.grid[i][j].surroundingMines += 1
 
-    def get_box_state(self, line, column):
-        return self.grid[line][column].__str__()
+    def get_box_state(self, row, column):
+        """
+        @param row: the row position of the box to test
+        @type row: int
+        @param column: the column position of the box to test
+        @type column: int
+        @return: a string corresponding to the state of the box:
+                if the box has been discovered :
+                        if the box has a mine : 'X'
+                        if the box has no mine : a string corresponding to the number of surrounding mines
+                else :
+                        if the box has a flag : '@'
+                        else : 'U'
+        @rtype:str
+        """
+        return self.grid[row][column].__str__()
 
-    def get_nbr_of_surrounding_flags(self, line, column):
+    def get_nbr_of_surrounding_flags(self, row, column):
+        """
+        @param row: the row position of the box to test
+        @type row: int
+        @param column: the column position of the box to test
+        @type column: int
+        @return: the number of flags surrounding the tested box
+        @rtype: int
+        A method that returns the number of bombs surrounding a specific box in the grid
+        """
         nbr_of_flags = 0
         for i in range(-1, 2):
             for j in range(-1, 2):
-                if 0 <= i + line < LINE and 0 <= j + column < COLUMN:
-                    if self.grid[i + line][j + column].has_flag():
+                if 0 <= i + row < LINE and 0 <= j + column < COLUMN:
+                    if self.grid[i + row][j + column].has_flag():
                         nbr_of_flags += 1
         return nbr_of_flags
 
@@ -106,24 +100,11 @@ class Grid:
     def is_grid_secured(self):
         return not self.__undiscovered_secured_boxes
 
-    def __str__(self):
-        displayable_grid = ""
-        for i in self.grid:
-            for j in i:
-                displayable_grid += str(j) + ' '
-            displayable_grid += '\n'
-        return displayable_grid
-    #
-    # def debug_str(self):
-    #     string = ''
-    #     for i in range(LINE):
-    #         for j in range(COLUMN):
-    #             string += self.grid[i][j].debug_str() + ' '
-    #         string += '\n'
-    #     return string
-
 
 def game():
+    """
+    main function of the program
+    """
     root = tk.Tk()
     window = App(root)
     window.mainloop()
