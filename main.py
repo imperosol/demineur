@@ -1,7 +1,7 @@
 from gui import *
 from random import sample
 
-LINE = 10
+LINE = 13
 COLUMN = 20
 BOMB_PROPORTION = 5
 
@@ -38,7 +38,7 @@ class Box:
 class Grid:
     def __init__(self):
         _nbr_of_boxes, _nbr_of_bombs = LINE * COLUMN, (LINE * COLUMN) // BOMB_PROPORTION
-        self.grid = [[Box() for x in range(COLUMN)] for y in range(LINE)]
+        self.grid = [[Box() for x in range(COLUMN)] for y in range(LINE)]  # 2d list of LINE*COLUMN Box() instances
         self.__undiscovered_secured_boxes = _nbr_of_boxes - _nbr_of_bombs
         self.flags = 0
         # Create a list of coordinates couple to determine the places in which the bombs will be put
